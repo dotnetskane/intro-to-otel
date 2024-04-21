@@ -4,7 +4,6 @@ using OTEL1;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureOpenTelemetry();
-
 builder.Services.AddSingleton<WeatherMetrics>();
 
 // Add services to the container.

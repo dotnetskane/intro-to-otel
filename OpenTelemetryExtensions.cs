@@ -1,5 +1,6 @@
 ﻿using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 
 namespace OTEL1;
 
@@ -22,6 +23,19 @@ public static class OpenTelemetryExtensions
                    .AddOtlpExporter();
 
             metrics.AddMeter("otel1.weatherapi");
+        });
+
+        builder.Services.AddOpenTelemetry().WithTracing(tracing =>
+        {
+            if (builder.Environment.IsDevelopment())
+            {
+                tracing.SetSampler(new AlwaysOnSampler());
+            }
+
+            tracing.AddAspNetCoreInstrumentation()
+                   .AddHttpClientInstrumentation()
+                   .AddOtlpExporter();
+            
         });
 
         return builder;
