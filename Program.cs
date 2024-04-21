@@ -29,7 +29,11 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", ([FromServices]ILogger<Program> logger, [FromServices] WeatherMetrics metrics) =>
 {
-    using var activity = WeatherApiActivitySource.ActivitySource.StartActivity("GetWeatherForecasts");
+    using var activity = WeatherApiActivitySource.ActivitySource.StartActivity(
+        name: "Custom activity GetWeatherForecasts",
+        kind: System.Diagnostics.ActivityKind.Internal,
+        tags: [new("Hello", "World")]);
+
     var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
