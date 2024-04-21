@@ -1,6 +1,5 @@
 ﻿using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
 
 namespace OTEL1;
 
@@ -12,9 +11,16 @@ public static class OpenTelemetryExtensions
         {
             logging.IncludeFormattedMessage = true;
             logging.IncludeScopes = true;
+            logging.AddOtlpExporter();
         });
 
-        builder.Services.Configure<OpenTelemetryLoggerOptions>(logging => logging.AddOtlpExporter());
+        builder.Services.AddOpenTelemetry().WithMetrics(metrics =>
+        {
+            metrics.AddAspNetCoreInstrumentation()
+                   .AddHttpClientInstrumentation()
+                   .AddRuntimeInstrumentation()
+                   .AddOtlpExporter();
+        });
 
         return builder;
     }
