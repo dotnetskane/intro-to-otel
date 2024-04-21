@@ -5,6 +5,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureOpenTelemetry();
 builder.Services.AddSingleton<WeatherMetrics>();
+builder.Services.AddHttpClient();
+builder.Configuration.AddUserSecrets<Program>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -42,6 +44,20 @@ app.MapGet("/weatherforecast", ([FromServices]ILogger<Program> logger, [FromServ
     return forecast;
 })
 .WithName("GetWeatherForecast")
+.WithOpenApi();
+
+app.MapGet("/downstream", async ([FromServices] IHttpClientFactory clientFactory, [FromServices] ILogger<Program> logger, [FromServices] IConfiguration configuration) =>
+{
+    var client = clientFactory.CreateClient();
+
+    var response = await client.GetAsync(configuration["Services:DownstreamApi:BaseAddress"]);
+    var content = await response.Content.ReadAsStringAsync();
+    
+    logger.LogInformation("Received content from downstream service: {content}", content);
+    
+    return content;
+})
+.WithName("GetDownstreamContent")
 .WithOpenApi();
 
 app.Run();
