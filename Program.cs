@@ -33,6 +33,9 @@ app.MapGet("/weatherforecast", ([FromServices]ILogger<Program> logger, [FromServ
         name: "Custom activity GetWeatherForecasts",
         kind: System.Diagnostics.ActivityKind.Internal,
         tags: [new("Hello", "World")]);
+    
+    activity?.SetTag("WeatherApi", "WeatherForecast");
+    activity?.AddEvent(new("Getting weather forecasts."));
 
     var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
@@ -45,6 +48,7 @@ app.MapGet("/weatherforecast", ([FromServices]ILogger<Program> logger, [FromServ
     
     logger.LogInformation("Getting {forecasts} weather forecasts.", forecast.Length);
     metrics?.RecordWeatherForecast(forecast.Length);
+    activity?.AddEvent(new("Weather forecasts retrieved."));
     
     return forecast;
 })
