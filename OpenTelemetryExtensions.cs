@@ -20,6 +20,8 @@ public static class OpenTelemetryExtensions
                    .AddHttpClientInstrumentation()
                    .AddRuntimeInstrumentation()
                    .AddOtlpExporter();
+
+            metrics.AddMeter("otel1.weatherapi");
         });
 
         return builder;
