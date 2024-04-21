@@ -36,6 +36,7 @@ public static class OpenTelemetryExtensions
                    .AddHttpClientInstrumentation()
                    .AddOtlpExporter();
             
+            tracing.AddSource("OTEL1");
         });
 
         return builder;
