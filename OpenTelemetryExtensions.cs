@@ -1,4 +1,5 @@
-﻿using OpenTelemetry.Logs;
+﻿using OpenTelemetry;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
@@ -12,17 +13,6 @@ public static class OpenTelemetryExtensions
         {
             logging.IncludeFormattedMessage = true;
             logging.IncludeScopes = true;
-            logging.AddOtlpExporter();
-        });
-
-        builder.Services.AddOpenTelemetry().WithMetrics(metrics =>
-        {
-            metrics.AddAspNetCoreInstrumentation()
-                   .AddHttpClientInstrumentation()
-                   .AddRuntimeInstrumentation()
-                   .AddOtlpExporter();
-
-            metrics.AddMeter("otel1.weatherapi");
         });
 
         builder.Services.AddOpenTelemetry().WithTracing(tracing =>
@@ -33,12 +23,22 @@ public static class OpenTelemetryExtensions
             }
 
             tracing.AddAspNetCoreInstrumentation()
-                   .AddHttpClientInstrumentation()
-                   .AddOtlpExporter();
-            
+                   .AddHttpClientInstrumentation();
+
             tracing.AddSource("OTEL1");
         });
 
+        builder.Services.AddOpenTelemetry().WithMetrics(metrics =>
+        {
+            metrics.AddAspNetCoreInstrumentation()
+                   .AddHttpClientInstrumentation()
+                   .AddRuntimeInstrumentation();
+
+            metrics.AddMeter("otel1.weatherapi");
+        });
+
+        builder.Services.AddOpenTelemetry().UseOtlpExporter();
+        
         return builder;
     }
 }

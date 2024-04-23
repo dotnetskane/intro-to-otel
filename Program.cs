@@ -2,11 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using OTEL1;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.ConfigureDefaults();
 
 builder.ConfigureOpenTelemetry();
 builder.Services.AddSingleton<WeatherMetrics>();
-builder.Services.AddHttpClient();
-builder.Configuration.AddUserSecrets<Program>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
